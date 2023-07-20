@@ -317,5 +317,18 @@ class Village {
 };
 $village = new Village;
 $building = new Building;
-//include_once("Automation.php");
+
+// if automation is not currently running, run it for this user,
+// so if they are waiting for some automation to take place
+// (units, resources, buildings...), the script will calculate that
+// before showing the page
+// ... this is a quick fix for automation being called async by AJAX
+//     and users seeing old values on their page even though new values
+//     already exist after the initial AJAX call
+if ( !file_exists( AUTOMATION_LOCK_FILE_NAME ) ) {
+	define( 'AUTOMATION_MANUAL_RUN', true );
+	// this file is auto-removed by the Automation.php script
+	file_put_contents( AUTOMATION_LOCK_FILE_NAME, '' );
+	include_once("Automation.php");
+}
 ?>
